@@ -9,7 +9,9 @@ A playful, visual-first client intake form for a software agency that builds pla
 - **8 screens:** Welcome, 6 steps (Basics, Problem, People, Features, Vibe, Reality), and Closing
 - **Animated progress bar** showing "Step N of 6" (the welcome and closing screens aren't counted)
 - **Option cards:** tap to select. Single-select replaces the choice; multi-select toggles.
-- **Conditional reveal:** picking "Something else" in Q2.2 opens a follow-up text field
+- **Conditional reveal:** picking "Something else" in Q2.2 or in the features grid opens a follow-up text field
+- **Inclusive features:** besides commerce and booking tools, the features grid covers blogs and content sites (articles, comments, newsletter, categories and tags, media gallery)
+- **Devices:** people can pick desktop/laptop and phone together; "Not sure" can't be combined with the others
 - **Validation:** required fields block *Next* and show a gentle inline message ("Just need this one to keep going →")
 - **Auto-save:** answers save to `sessionStorage` on every change, and a "Pick up where you left off" link appears on return
 - **Closing summary:** an "answers at a glance" panel with an *Edit* link for each answer, plus confetti on send
@@ -33,8 +35,8 @@ The form POSTs JSON in this shape:
   "answers": {
     "name": "", "projectName": "", "platform": "",
     "problem": "", "currentSolution": "", "currentSolutionOther": "", "sixMonths": "",
-    "users": [], "device": "",
-    "features": [], "mustHave": "", "integrations": "",
+    "users": [], "device": [],
+    "features": [], "featuresOther": "", "mustHave": "", "integrations": "",
     "personality": "", "inspirationUrl": "", "antiVibe": "",
     "timeline": "", "decisionMakers": ""
   }

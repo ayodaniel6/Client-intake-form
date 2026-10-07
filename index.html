@@ -1050,21 +1050,21 @@
             <div class="error" id="err-users" role="alert"><span>Just need this one to keep going →</span></div>
           </fieldset>
 
-          <fieldset class="question" data-question="device" data-required="true" data-type="single">
-            <legend class="question__label" id="lbl-device">What device will they mostly use?<span class="req" aria-hidden="true">*</span></legend>
+          <fieldset class="question" data-question="device" data-required="true" data-type="multi">
+            <legend class="question__label" id="lbl-device">What device will they mostly use?<span class="req" aria-hidden="true">*</span><span class="opt">Pick all that apply</span></legend>
             <div class="question__body">
-              <div class="cards cards--3" role="radiogroup" aria-labelledby="lbl-device" aria-required="true" aria-describedby="err-device">
-                <button type="button" class="card" role="radio" aria-checked="false" data-value="Desktop" aria-label="Desktop — at a desk, focused">
+              <div class="cards cards--3" role="group" aria-labelledby="lbl-device" aria-describedby="err-device">
+                <button type="button" class="card" role="checkbox" aria-checked="false" data-value="Desktop / Laptop" aria-label="Desktop or laptop — at a desk, focused">
                   <span class="card__emoji" aria-hidden="true">💻</span>
-                  <span class="card__text"><span class="card__title">Desktop</span><span class="card__desc">At a desk, focused</span></span>
+                  <span class="card__text"><span class="card__title">Desktop / Laptop</span><span class="card__desc">At a desk, focused</span></span>
                   <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
                 </button>
-                <button type="button" class="card" role="radio" aria-checked="false" data-value="Phone" aria-label="Phone — on the go, quick taps">
+                <button type="button" class="card" role="checkbox" aria-checked="false" data-value="Phone" aria-label="Phone — on the go, quick taps">
                   <span class="card__emoji" aria-hidden="true">📱</span>
                   <span class="card__text"><span class="card__title">Phone</span><span class="card__desc">On the go, quick taps</span></span>
                   <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
                 </button>
-                <button type="button" class="card" role="radio" aria-checked="false" data-value="Not sure" aria-label="Not sure — help me figure it out">
+                <button type="button" class="card" role="checkbox" aria-checked="false" data-value="Not sure" data-exclusive="true" aria-label="Not sure — help me figure it out">
                   <span class="card__emoji" aria-hidden="true">🤷</span>
                   <span class="card__text"><span class="card__title">Not sure</span><span class="card__desc">Help me figure it out</span></span>
                   <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
@@ -1090,7 +1090,7 @@
             <div class="section-emoji" aria-hidden="true">⚡</div>
             <span class="section-kicker">The features</span>
             <h2 id="h-s4">What should it do?</h2>
-            <p class="helper">Tap everything you think you'll need. Don't overthink — you can change this later.</p>
+            <p class="helper">Tap everything you think you'll need — whether it's a shop, a booking tool, a blog or something in between. Don't overthink — you can change this later.</p>
           </header>
 
           <fieldset class="question" data-question="features" data-type="multi">
@@ -1109,6 +1109,18 @@
                 <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Social login" aria-label="Social login"><span class="card__emoji" aria-hidden="true">🌐</span><span class="card__title">Social login</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
                 <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="AI (maybe)" aria-label="AI, maybe"><span class="card__emoji" aria-hidden="true">🤖</span><span class="card__title">AI (maybe)</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
                 <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="File uploads" aria-label="File uploads"><span class="card__emoji" aria-hidden="true">🗂️</span><span class="card__title">File uploads</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Blog &amp; articles" aria-label="Blog and articles"><span class="card__emoji" aria-hidden="true">📝</span><span class="card__title">Blog &amp; articles</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Comments" aria-label="Comments"><span class="card__emoji" aria-hidden="true">🗨️</span><span class="card__title">Comments</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Newsletter" aria-label="Newsletter"><span class="card__emoji" aria-hidden="true">📧</span><span class="card__title">Newsletter</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Categories &amp; tags" aria-label="Categories and tags"><span class="card__emoji" aria-hidden="true">🏷️</span><span class="card__title">Categories &amp; tags</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Media gallery" aria-label="Media gallery"><span class="card__emoji" aria-hidden="true">🖼️</span><span class="card__title">Media gallery</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Something else" data-reveal="reveal-feature-other" aria-controls="reveal-feature-other" aria-label="Something else — tell me what you need"><span class="card__emoji" aria-hidden="true">✨</span><span class="card__title">Something else</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+              </div>
+              <div class="reveal" id="reveal-feature-other" aria-hidden="true">
+                <div class="reveal__inner">
+                  <label class="sr-only" for="q-featuresOther">What else should it do?</label>
+                  <input class="input" id="q-featuresOther" name="featuresOther" type="text" placeholder="What else should it do? e.g. podcasts, events, a members-only area..." tabindex="-1" />
+                </div>
               </div>
               <div class="counter" id="featureCounter" aria-live="polite">Nothing picked yet — go on, tap a few.</div>
             </div>
@@ -1332,7 +1344,7 @@
        (answers are logged to the console and kept in sessionStorage).
        ========================================================= */
     var SUBMIT_ENDPOINT = "";
-    var STORAGE_KEY = "intake-form-v1";
+    var STORAGE_KEY = "intake-form-v2";
     var TOTAL_STEPS = 6;
     var LAST_SCREEN = 7;
 
@@ -1358,8 +1370,9 @@
         currentSolutionOther: "",
         sixMonths: "",
         users: [],
-        device: "",
+        device: [],
         features: [],
+        featuresOther: "",
         mustHave: "",
         integrations: "",
         personality: "",
@@ -1398,7 +1411,10 @@
         var saved = JSON.parse(raw);
         if (!saved || !saved.answers) return false;
         Object.keys(state.answers).forEach(function (k) {
-          if (saved.answers[k] !== undefined) state.answers[k] = saved.answers[k];
+          var v = saved.answers[k];
+          if (v === undefined) return;
+          if (Array.isArray(state.answers[k]) && !Array.isArray(v)) v = v ? [v] : [];
+          state.answers[k] = v;
         });
         state.screen = typeof saved.screen === "number" ? saved.screen : 0;
         state.submitted = !!saved.submitted;
@@ -1449,16 +1465,20 @@
       } else if (type === "multi") {
         var on = card.getAttribute("aria-checked") !== "true";
         card.setAttribute("aria-checked", on ? "true" : "false");
-        var list = state.answers[key].slice();
-        var idx = list.indexOf(value);
-        if (on && idx === -1) list.push(value);
-        if (!on && idx > -1) list.splice(idx, 1);
-        state.answers[key] = list;
+        // An "exclusive" card (e.g. "Not sure") can't be combined with the others
+        if (on) {
+          var exclusive = card.hasAttribute("data-exclusive");
+          q.querySelectorAll(".card").forEach(function (c) {
+            if (c !== card && (exclusive || c.hasAttribute("data-exclusive"))) c.setAttribute("aria-checked", "false");
+          });
+        }
+        state.answers[key] = Array.prototype.slice.call(q.querySelectorAll('.card[aria-checked="true"]'))
+          .map(function (c) { return c.getAttribute("data-value"); });
         if (key === "features") updateFeatureCounter(true);
       }
 
       clearError(q);
-      if (key === "currentSolution") syncReveal(true);
+      if (card.hasAttribute("data-reveal") || q.querySelector("[data-reveal]")) syncReveal(card);
       save(true);
     });
 
@@ -1511,18 +1531,19 @@
     /* =========================================================
        CONDITIONAL REVEAL (Q2.2 "Something else")
        ========================================================= */
-    function syncReveal(focusInput) {
-      var reveal = document.getElementById("reveal-other");
-      var input = document.getElementById("q-currentSolutionOther");
-      var trigger = form.querySelector('[data-reveal="reveal-other"]');
-      var open = state.answers.currentSolution === "Something else";
-      reveal.classList.toggle("is-open", open);
-      reveal.setAttribute("aria-hidden", open ? "false" : "true");
-      trigger.setAttribute("aria-expanded", open ? "true" : "false");
-      input.tabIndex = open ? 0 : -1;
-      if (open && focusInput) {
-        setTimeout(function () { input.focus({ preventScroll: true }); }, 250);
-      }
+    function syncReveal(focusFrom) {
+      form.querySelectorAll("[data-reveal]").forEach(function (trigger) {
+        var reveal = document.getElementById(trigger.getAttribute("data-reveal"));
+        var input = reveal.querySelector(".input");
+        var open = trigger.getAttribute("aria-checked") === "true";
+        reveal.classList.toggle("is-open", open);
+        reveal.setAttribute("aria-hidden", open ? "false" : "true");
+        trigger.setAttribute("aria-expanded", open ? "true" : "false");
+        input.tabIndex = open ? 0 : -1;
+        if (open && focusFrom === trigger) {
+          setTimeout(function () { input.focus({ preventScroll: true }); }, 250);
+        }
+      });
     }
 
     /* =========================================================
@@ -1552,7 +1573,7 @@
         featureCounter.classList.add("bump");
       }
       featureList.innerHTML = "";
-      state.answers.features.forEach(function (f) {
+      state.answers.features.filter(function (f) { return f !== "Something else"; }).forEach(function (f) {
         var opt = document.createElement("option");
         opt.value = f;
         featureList.appendChild(opt);
@@ -1708,7 +1729,7 @@
       ["currentSolution", "How it's handled today", 2],
       ["sixMonths", "In 6 months", 2],
       ["users", "Who's using it", 3],
-      ["device", "Main device", 3],
+      ["device", "Devices", 3],
       ["features", "Features", 4],
       ["mustHave", "The ONE must-have", 4],
       ["integrations", "Connects with", 4],
@@ -1730,6 +1751,9 @@
         var v = a[f[0]];
         if (f[0] === "currentSolution" && v === "Something else" && a.currentSolutionOther) {
           v = "Something else: " + a.currentSolutionOther;
+        }
+        if (f[0] === "features" && a.featuresOther && v.indexOf("Something else") > -1) {
+          v = v.map(function (x) { return x === "Something else" ? "Something else: " + a.featuresOther : x; });
         }
         if (Array.isArray(v)) v = v.join(", ");
         var dt = document.createElement("dt");
@@ -1754,6 +1778,7 @@
     function buildPayload() {
       var a = JSON.parse(JSON.stringify(state.answers));
       if (a.currentSolution !== "Something else") a.currentSolutionOther = "";
+      if (a.features.indexOf("Something else") === -1) a.featuresOther = "";
       return {
         submittedAt: new Date().toISOString(),
         source: "client-intake-form",
