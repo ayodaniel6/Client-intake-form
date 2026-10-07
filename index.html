@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Let's shape what you're building</title>
+  <meta name="description" content="A quick, visual project intake — tell us what you're building in about 10 minutes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* =========================================================
+       DESIGN TOKENS
+       ========================================================= */
+    :root {
+      --bg-base: #FAFAF8;
+      --bg-card: #FFFFFF;
+      --accent-primary: #5B4BFF;
+      --accent-primary-hover: #4A3AF0;
+      --accent-tint: #5B4BFF10;
+      --accent-tint-strong: #5B4BFF1F;
+      --accent-secondary: #FF6B6B;
+      --success: #10B981;
+      --text-primary: #0F0F0F;
+      --text-secondary: #6B7280;
+      --border: #E5E7EB;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-pill: 9999px;
+
+      --space-section: 48px;
+      --space-question: 24px;
+      --space-card: 12px;
+
+      --shadow-hover: 0 6px 20px -8px rgba(91, 75, 255, 0.35);
+      --shadow-soft: 0 1px 2px rgba(15, 15, 15, 0.04), 0 4px 16px -6px rgba(15, 15, 15, 0.08);
+
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body { min-height: 100vh; overflow-x: hidden; }
+
+    /* =========================================================
+       PROGRESS BAR
+       ========================================================= */
+    .progress {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      background: rgba(250, 250, 248, 0.88);
+      backdrop-filter: saturate(160%) blur(8px);
+      -webkit-backdrop-filter: saturate(160%) blur(8px);
+      transform: translateY(-100%);
+      transition: transform 0.45s var(--ease-out);
+    }
+    .progress.is-visible { transform: translateY(0); }
+
+    .progress__track {
+      height: 4px;
+      width: 100%;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .progress__fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-primary), #7B6DFF);
+      border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+      transition: width 0.6s var(--ease-out);
+    }
+    .progress__meta {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .progress__label { font-weight: 600; color: var(--text-primary); }
+    .progress__saved {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .progress__saved.is-visible { opacity: 1; }
+    .progress__saved::before {
+      content: "";
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    /* =========================================================
+       LAYOUT
+       ========================================================= */
+    .shell {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 80px 24px;
+      min-height: 100vh;
+    }
+
+    .screen {
+      display: none;
+      outline: none;
+    }
+    .screen.is-active { display: block; }
+    .screen.is-entering { animation: screenIn 0.55s var(--ease-out) both; }
+    .screen.is-entering-back { animation: screenInBack 0.55s var(--ease-out) both; }
+    .screen.is-leaving { display: block; animation: screenOut 0.28s ease-in both; }
+    .screen.is-leaving-back { display: block; animation: screenOutBack 0.28s ease-in both; }
+
+    @keyframes screenIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes screenInBack {
+      from { opacity: 0; transform: translateY(-24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes screenOut {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(-16px); }
+    }
+    @keyframes screenOutBack {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(16px); }
+    }
+
+    /* Stagger children of an entering screen */
+    .screen.is-entering .stagger > *,
+    .screen.is-entering-back .stagger > * {
+      animation: fadeUp 0.6s var(--ease-out) both;
+    }
+    .stagger > *:nth-child(1) { animation-delay: 0.04s; }
+    .stagger > *:nth-child(2) { animation-delay: 0.10s; }
+    .stagger > *:nth-child(3) { animation-delay: 0.16s; }
+    .stagger > *:nth-child(4) { animation-delay: 0.22s; }
+    .stagger > *:nth-child(5) { animation-delay: 0.28s; }
+    .stagger > *:nth-child(6) { animation-delay: 0.34s; }
+    .stagger > *:nth-child(7) { animation-delay: 0.40s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================================================
+       TYPOGRAPHY
+       ========================================================= */
+    h1, h2 {
+      font-weight: 700;
+      font-size: 32px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin: 0 0 16px;
+    }
+    .subhead, .question__label {
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+    }
+    p { margin: 0 0 16px; }
+    .helper {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .lede { color: var(--text-secondary); }
+    .lede strong { color: var(--text-primary); font-weight: 600; }
+
+    /* =========================================================
+       SECTION HEADER
+       ========================================================= */
+    .section-head { margin-bottom: var(--space-section); }
+    .section-emoji {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px; height: 64px;
+      font-size: 36px;
+      line-height: 1;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 20px;
+      animation: wiggle 3.6s ease-in-out 0.8s infinite;
+      transform-origin: 50% 80%;
+    }
+    @keyframes wiggle {
+      0%, 86%, 100% { transform: rotate(0deg); }
+      89% { transform: rotate(-9deg); }
+      93% { transform: rotate(8deg); }
+      96% { transform: rotate(-4deg); }
+    }
+    .section-kicker {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-primary);
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+    }
+
+    /* =========================================================
+       QUESTIONS
+       ========================================================= */
+    .question {
+      margin-bottom: var(--space-question);
+      padding-bottom: var(--space-question);
+    }
+    .question + .question { padding-top: 0; }
+    .question__label {
+      display: block;
+      margin: 0 0 6px;
+      color: var(--text-primary);
+    }
+    .question__label .req {
+      color: var(--accent-secondary);
+      margin-left: 2px;
+    }
+    .question__label .opt {
+      font-weight: 400;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-left: 6px;
+    }
+    .question__aside {
+      display: block;
+      font-weight: 400;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .question__body { margin-top: 14px; }
+    fieldset.question { border: 0; padding-left: 0; padding-right: 0; margin-left: 0; margin-right: 0; min-width: 0; }
+    fieldset.question legend { padding: 0; }
+
+    /* =========================================================
+       TEXT INPUTS
+       ========================================================= */
+    .input, .textarea {
+      display: block;
+      width: 100%;
+      font: inherit;
+      font-size: 16px;
+      color: var(--text-primary);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .input { min-height: 52px; }
+    .textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+    .input::placeholder, .textarea::placeholder { color: #A3A8B3; }
+    .input:hover, .textarea:hover { border-color: #C9CCD3; }
+    .input:focus, .textarea:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px var(--accent-tint-strong);
+    }
+    .question.has-error .input,
+    .question.has-error .textarea {
+      border-color: var(--accent-secondary);
+      box-shadow: 0 0 0 3px #FF6B6B1F;
+    }
+
+    /* =========================================================
+       OPTION CARDS
+       ========================================================= */
+    .cards {
+      display: grid;
+      gap: var(--space-card);
+    }
+    .cards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cards--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .cards--stack { grid-template-columns: 1fr; }
+    /* 3 + 2 grid: 6-col base, first three span 2, last two span 3 */
+    .cards--3-2 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .cards--3-2 > .card:nth-child(-n+3) { grid-column: span 2; }
+    .cards--3-2 > .card:nth-child(n+4) { grid-column: span 3; }
+
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      font: inherit;
+      color: var(--text-primary);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      cursor: pointer;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.25s ease,
+        background-color 0.2s ease,
+        transform 0.2s var(--ease-out);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .card:hover {
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    .card:active { transform: translateY(0) scale(0.985); }
+    .card:focus { outline: none; }
+    .card:focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 3px;
+    }
+    .card[aria-checked="true"] {
+      border-color: var(--accent-primary);
+      box-shadow: inset 0 0 0 1px var(--accent-primary);
+      background: var(--accent-tint);
+    }
+    .card[aria-checked="true"]:hover { box-shadow: inset 0 0 0 1px var(--accent-primary), var(--shadow-hover); }
+
+    .card__emoji {
+      font-size: 34px;
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.35s var(--ease-out);
+    }
+    .card:hover .card__emoji { transform: scale(1.08) rotate(-4deg); }
+    .card[aria-checked="true"] .card__emoji { animation: pop 0.45s var(--ease-out); }
+    @keyframes pop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.25) rotate(-6deg); }
+      100% { transform: scale(1); }
+    }
+
+    .card__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .card__title { font-weight: 600; font-size: 16px; line-height: 1.35; }
+    .card__desc { font-size: 14px; color: var(--text-secondary); line-height: 1.45; }
+
+    /* Horizontal (row) card variant for vertical lists */
+    .card--row {
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      padding-right: 56px;
+    }
+    .card--row .card__emoji { font-size: 32px; flex-shrink: 0; }
+
+    /* Compact centered tiles (feature grid) */
+    .card--tile {
+      align-items: center;
+      text-align: center;
+      padding: 20px 12px;
+      gap: 8px;
+    }
+    .card--tile .card__title { font-size: 15px; }
+
+    /* Check indicator */
+    .card__check {
+      position: absolute;
+      top: 12px; right: 12px;
+      width: 22px; height: 22px;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid var(--border);
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s var(--ease-out);
+    }
+    .card--row .card__check { top: 50%; right: 20px; transform: translateY(-50%); }
+    .card__check svg {
+      width: 12px; height: 12px;
+      stroke: #fff;
+      stroke-width: 3;
+      fill: none;
+      stroke-dasharray: 20;
+      stroke-dashoffset: 20;
+      transition: stroke-dashoffset 0.3s var(--ease-out) 0.05s;
+    }
+    .card[role="checkbox"] .card__check { border-radius: 6px; }
+    .card[aria-checked="true"] .card__check {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+    }
+    .card[aria-checked="true"] .card__check svg { stroke-dashoffset: 0; }
+
+    /* Conditional reveal */
+    .reveal {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition: grid-template-rows 0.4s var(--ease-out), opacity 0.3s ease, margin-top 0.4s var(--ease-out);
+      margin-top: 0;
+    }
+    .reveal > .reveal__inner { overflow: hidden; }
+    .reveal.is-open {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      margin-top: var(--space-card);
+    }
+    .reveal .input { margin: 2px; width: calc(100% - 4px); }
+
+    /* Selection counter */
+    .counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      min-height: 22px;
+    }
+    .counter strong { color: var(--accent-primary); font-weight: 600; }
+    .counter.bump strong { animation: pop 0.4s var(--ease-out); display: inline-block; }
+
+    /* =========================================================
+       ERROR MESSAGE
+       ========================================================= */
+    .error {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition: grid-template-rows 0.3s var(--ease-out), opacity 0.25s ease, margin-top 0.3s ease;
+      margin-top: 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: #E04848;
+    }
+    .error > span { overflow: hidden; }
+    .question.has-error .error {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      margin-top: 10px;
+    }
+    .question.shake .question__body { animation: shake 0.4s ease; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(2px); }
+    }
+
+    /* =========================================================
+       BUTTONS / NAV
+       ========================================================= */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: var(--space-section);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 0 28px;
+      font: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--radius-pill);
+      border: 0;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.2s var(--ease-out), box-shadow 0.25s ease, color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+    }
+    .btn:focus { outline: none; }
+    .btn:focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 3px;
+    }
+    .btn--primary {
+      background: var(--accent-primary);
+      color: #fff;
+      box-shadow: 0 6px 18px -8px rgba(91, 75, 255, 0.6);
+    }
+    .btn--primary:hover {
+      background: var(--accent-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px -10px rgba(91, 75, 255, 0.7);
+    }
+    .btn--primary:active { transform: translateY(0) scale(0.98); }
+    .btn--primary .arrow { display: inline-block; transition: transform 0.25s var(--ease-out); }
+    .btn--primary:hover .arrow { transform: translateX(4px); }
+    .btn--primary[disabled] { opacity: 0.7; cursor: progress; }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 0 16px;
+    }
+    .btn--ghost:hover { color: var(--text-primary); background: #F0F0EC; }
+
+    .btn--lg { min-height: 56px; padding: 0 36px; font-size: 17px; }
+
+    .kbd-hint {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-left: auto;
+      margin-right: 4px;
+    }
+    .kbd-hint kbd {
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+
+    /* =========================================================
+       WELCOME
+       ========================================================= */
+    .hero-illustration {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+    .hero-illustration svg { display: block; width: 100%; height: 100%; }
+
+    .float-a { animation: floatA 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .float-b { animation: floatB 7s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .float-c { animation: floatA 5s ease-in-out 1s infinite; transform-box: fill-box; transform-origin: center; }
+    .draw-line {
+      stroke-dasharray: 160;
+      stroke-dashoffset: 160;
+      animation: draw 3.2s var(--ease-out) 0.6s infinite alternate;
+    }
+    .pencil { animation: pencil 3.2s var(--ease-out) 0.6s infinite alternate; }
+    @keyframes floatA { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes floatB { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(5px) rotate(6deg); } }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @keyframes pencil { from { transform: translate(0, 0); } to { transform: translate(64px, -10px); } }
+
+    .welcome h1 { font-size: 32px; margin-bottom: 20px; }
+    .welcome .lede p { font-size: 16px; }
+    .welcome .lede p:first-child { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 28px 0 40px;
+      padding: 0;
+      list-style: none;
+    }
+    .meta-row li {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .meta-row .meta-emoji { font-size: 16px; line-height: 1; }
+
+    .resume-note {
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .resume-note button {
+      font: inherit;
+      color: var(--accent-primary);
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .resume-note button:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; border-radius: 4px; }
+
+    /* =========================================================
+       CLOSING
+       ========================================================= */
+    .closing { text-align: left; }
+    .closing .hero-illustration { aspect-ratio: 16 / 7; }
+    .closing h1 { margin-bottom: 20px; }
+    .closing .ps {
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .sent-state {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: #10B98112;
+      border: 1px solid #10B98140;
+      color: #065F46;
+      font-weight: 500;
+      animation: fadeUp 0.5s var(--ease-out) both;
+    }
+    .sent-state.is-visible { display: flex; }
+    .sent-state .tick {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--success);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sent-state .tick svg { width: 14px; height: 14px; stroke: #fff; stroke-width: 3; fill: none; }
+    .closing-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+    .summary {
+      margin-top: 40px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      overflow: hidden;
+    }
+    .summary summary {
+      cursor: pointer;
+      padding: 16px 20px;
+      font-weight: 600;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .summary summary::-webkit-details-marker { display: none; }
+    .summary summary::after { content: "＋"; color: var(--text-secondary); transition: transform 0.25s ease; }
+    .summary[open] summary::after { transform: rotate(45deg); }
+    .summary summary:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: -2px; border-radius: var(--radius-md); }
+    .summary dl { margin: 0; padding: 0 20px 20px; }
+    .summary dt { font-size: 13px; color: var(--text-secondary); margin-top: 14px; }
+    .summary dd { margin: 2px 0 0; font-size: 15px; white-space: pre-wrap; word-break: break-word; }
+    .summary .edit-link {
+      font: inherit; font-size: 13px; color: var(--accent-primary); background: none; border: 0; padding: 0; margin-left: 6px; cursor: pointer; font-weight: 600;
+    }
+
+    /* Confetti */
+    .confetti {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      overflow: hidden;
+    }
+    .confetti i {
+      position: absolute;
+      top: -16px;
+      width: 9px; height: 14px;
+      border-radius: 3px;
+      opacity: 0.95;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      to { transform: translate3d(var(--dx, 0), 110vh, 0) rotate(var(--rot, 540deg)); opacity: 0.9; }
+    }
+
+    /* Screen-reader only */
+    .sr-only {
+      position: absolute !important;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* =========================================================
+       RESPONSIVE (mobile-first collapse below 640px)
+       ========================================================= */
+    @media (max-width: 639px) {
+      .shell { padding: 40px 16px; }
+      .progress ~ .shell { padding-top: 88px; }
+      h1, h2 { font-size: 28px; }
+      .welcome h1 { font-size: 28px; }
+      .cards--2, .cards--3, .cards--3-2 { grid-template-columns: 1fr; }
+      .cards--3-2 > .card:nth-child(n) { grid-column: auto; }
+      .card, .card--tile {
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+        justify-content: flex-start;
+        padding: 16px 56px 16px 20px;
+        gap: 14px;
+      }
+      .card .card__check { top: 50%; transform: translateY(-50%); right: 20px; }
+      .card .card__emoji { font-size: 32px; flex-shrink: 0; }
+      .nav { flex-direction: column-reverse; align-items: stretch; }
+      .nav .btn { width: 100%; }
+      .kbd-hint { display: none; }
+      .btn--lg { width: 100%; }
+      .closing-actions { flex-direction: column; align-items: stretch; }
+      .closing-actions .btn { width: 100%; }
+      .meta-row li { font-size: 13px; }
+    }
+
+    @media (min-width: 640px) {
+      .progress ~ .shell { padding-top: 120px; }
+    }
+
+    /* Features grid stays 3-col on desktop; slightly smaller tiles on mid widths */
+    @media (min-width: 640px) and (max-width: 720px) {
+      .card--tile { padding: 18px 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+      .confetti { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================
+       PROGRESS BAR
+       ========================================================= -->
+  <div class="progress" id="progress" aria-hidden="true">
+    <div class="progress__track">
+      <div class="progress__fill" id="progressFill"></div>
+    </div>
+    <div class="progress__meta">
+      <span class="progress__label" id="progressLabel">Step 1 of 6</span>
+      <span class="progress__saved" id="savedIndicator">Saved</span>
+    </div>
+  </div>
+  <div class="sr-only" role="status" aria-live="polite" id="liveRegion"></div>
+
+  <main class="shell">
+    <form id="intakeForm" novalidate autocomplete="on">
+
+      <!-- =========================================================
+           SCREEN 0 — WELCOME
+           ========================================================= -->
+      <section class="screen welcome is-active" data-screen="0" aria-labelledby="h-welcome" tabindex="-1">
+        <div class="stagger">
+          <div class="hero-illustration" role="img" aria-label="Illustration of two people sketching a product interface together on a tablet">
+            <svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <rect width="640" height="360" fill="#FFFFFF"/>
+              <!-- soft background blobs -->
+              <circle cx="120" cy="80" r="70" fill="#5B4BFF" opacity="0.06"/>
+              <circle cx="540" cy="290" r="90" fill="#FF6B6B" opacity="0.07"/>
+              <!-- floating shapes -->
+              <g class="float-a"><circle cx="92" cy="96" r="10" fill="#FF6B6B"/></g>
+              <g class="float-b"><rect x="530" y="60" width="22" height="22" rx="6" fill="#5B4BFF" opacity="0.85"/></g>
+              <g class="float-c"><path d="M560 170 l10 -18 l10 18 z" fill="#FF6B6B" opacity="0.8"/></g>
+              <g class="float-a"><circle cx="70" cy="260" r="6" fill="#5B4BFF" opacity="0.5"/></g>
+
+              <!-- table -->
+              <rect x="100" y="282" width="440" height="14" rx="7" fill="#E5E7EB"/>
+
+              <!-- Person left (indigo) -->
+              <g>
+                <path d="M120 282 C120 220 150 196 186 196 C222 196 246 222 246 282 Z" fill="#5B4BFF"/>
+                <circle cx="186" cy="160" r="30" fill="#F5C6A5"/>
+                <path d="M156 156 C156 128 214 124 216 154 C206 142 176 140 156 156 Z" fill="#1F1B4D"/>
+                <!-- arm to tablet -->
+                <path d="M226 236 C250 246 268 252 290 254" stroke="#5B4BFF" stroke-width="18" stroke-linecap="round" fill="none"/>
+                <circle cx="292" cy="254" r="9" fill="#F5C6A5"/>
+              </g>
+
+              <!-- Person right (coral) -->
+              <g>
+                <path d="M394 282 C394 222 420 196 456 196 C492 196 520 220 520 282 Z" fill="#FF6B6B"/>
+                <circle cx="456" cy="160" r="30" fill="#C98E6B"/>
+                <path d="M426 160 C422 124 492 120 488 162 C480 140 446 136 426 160 Z" fill="#2A1A14"/>
+                <circle cx="486" cy="150" r="10" fill="#2A1A14"/>
+                <!-- arm pointing -->
+                <path d="M410 238 C392 246 376 248 362 246" stroke="#FF6B6B" stroke-width="18" stroke-linecap="round" fill="none"/>
+                <circle cx="358" cy="246" r="9" fill="#C98E6B"/>
+              </g>
+
+              <!-- Tablet -->
+              <g>
+                <rect x="250" y="190" width="150" height="96" rx="12" fill="#0F0F0F"/>
+                <rect x="258" y="198" width="134" height="80" rx="7" fill="#FAFAF8"/>
+                <!-- UI sketch -->
+                <rect x="266" y="206" width="54" height="8" rx="4" fill="#5B4BFF"/>
+                <rect x="266" y="220" width="36" height="5" rx="2.5" fill="#E5E7EB"/>
+                <rect x="330" y="206" width="54" height="40" rx="6" fill="#5B4BFF" opacity="0.12"/>
+                <rect x="266" y="232" width="56" height="14" rx="7" fill="#FF6B6B" opacity="0.85"/>
+                <path class="draw-line" d="M268 262 C290 252 300 270 320 258 S350 252 380 262" stroke="#5B4BFF" stroke-width="3" stroke-linecap="round" fill="none"/>
+                <!-- pencil tip -->
+                <g class="pencil">
+                  <path d="M312 256 l10 -16 l6 4 l-10 16 z" fill="#FF6B6B"/>
+                  <path d="M312 256 l6 4 l-7 3 z" fill="#0F0F0F"/>
+                </g>
+              </g>
+
+              <!-- sparkle -->
+              <g class="float-c">
+                <path d="M326 140 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 z" fill="#5B4BFF"/>
+              </g>
+            </svg>
+          </div>
+
+          <h1 id="h-welcome">Let's shape what you're building.</h1>
+
+          <div class="lede">
+            <p>This isn't a form. It's the first chapter.</p>
+            <p>I'm going to ask you a few questions that help me understand the world you're building. There are no wrong answers, no trick questions, and nothing is set in stone. Think of this as us sketching on a napkin together.</p>
+            <p>Takes about 10–12 minutes. Grab a coffee. Let's go.</p>
+          </div>
+
+          <ul class="meta-row" aria-label="What to expect">
+            <li><span class="meta-emoji" aria-hidden="true">⏱</span> About 10 minutes</li>
+            <li><span class="meta-emoji" aria-hidden="true">✏️</span> No wrong answers</li>
+            <li><span class="meta-emoji" aria-hidden="true">🔄</span> Change anything later</li>
+          </ul>
+
+          <div>
+            <button type="button" class="btn btn--primary btn--lg" data-action="start">Start <span class="arrow" aria-hidden="true">→</span></button>
+            <p class="resume-note" id="resumeNote" hidden>
+              Welcome back — your answers are saved. <button type="button" data-action="resume">Pick up where you left off</button>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 1 — THE BASICS
+           ========================================================= -->
+      <section class="screen" data-screen="1" data-step="1" aria-labelledby="h-s1" tabindex="-1">
+        <div class="stagger">
+          <header class="section-head">
+            <div class="section-emoji" aria-hidden="true">👋</div>
+            <span class="section-kicker">The basics</span>
+            <h2 id="h-s1">First, the easy stuff.</h2>
+          </header>
+
+          <div class="question" data-question="name" data-required="true" data-type="text">
+            <label class="question__label" for="q-name">What's your name, and what should I call you when we talk?<span class="req" aria-hidden="true">*</span></label>
+            <div class="question__body">
+              <input class="input" id="q-name" name="name" type="text" autocomplete="name" placeholder="Sarah, or just 'S' if you're feeling mysterious." aria-required="true" aria-describedby="err-name" />
+            </div>
+            <div class="error" id="err-name" role="alert"><span>Just need this one to keep going →</span></div>
+          </div>
+
+          <div class="question" data-question="projectName" data-type="text">
+            <label class="question__label" for="q-projectName">What's the name of this thing we're building together?<span class="opt">Optional</span>
+              <span class="question__aside">It can be a working title. It can be silly. It can change tomorrow.</span>
+            </label>
+            <div class="question__body">
+              <input class="input" id="q-projectName" name="projectName" type="text" placeholder="&quot;Project Sunshine&quot; or &quot;The Big Idea&quot; or &quot;Sarah's Salon App&quot;" />
+            </div>
+          </div>
+
+          <fieldset class="question" data-question="platform" data-required="true" data-type="single">
+            <legend class="question__label" id="lbl-platform">What kind of platform are you imagining?<span class="req" aria-hidden="true">*</span></legend>
+            <div class="question__body">
+              <div class="cards cards--2" role="radiogroup" aria-labelledby="lbl-platform" aria-required="true" aria-describedby="err-platform">
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Website" aria-label="Website">
+                  <span class="card__emoji" aria-hidden="true">🌐</span>
+                  <span class="card__text"><span class="card__title">Website</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Mobile App" aria-label="Mobile App">
+                  <span class="card__emoji" aria-hidden="true">📱</span>
+                  <span class="card__text"><span class="card__title">Mobile App</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Both" aria-label="Both — website and mobile app">
+                  <span class="card__emoji" aria-hidden="true">🌐📱</span>
+                  <span class="card__text"><span class="card__title">Both</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Not sure yet" aria-label="Not sure yet">
+                  <span class="card__emoji" aria-hidden="true">🤷</span>
+                  <span class="card__text"><span class="card__title">Not sure yet</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+              </div>
+            </div>
+            <div class="error" id="err-platform" role="alert"><span>Just need this one to keep going →</span></div>
+          </fieldset>
+
+          <div class="nav">
+            <button type="button" class="btn btn--ghost" data-action="back">← Back</button>
+            <span class="kbd-hint">or press <kbd>Enter ↵</kbd></span>
+            <button type="button" class="btn btn--primary" data-action="next">Next <span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 2 — THE PROBLEM
+           ========================================================= -->
+      <section class="screen" data-screen="2" data-step="2" aria-labelledby="h-s2" tabindex="-1">
+        <div class="stagger">
+          <header class="section-head">
+            <div class="section-emoji" aria-hidden="true">🎯</div>
+            <span class="section-kicker">The problem</span>
+            <h2 id="h-s2">What's not working right now?</h2>
+          </header>
+
+          <div class="question" data-question="problem" data-required="true" data-type="text">
+            <label class="question__label" for="q-problem">What's the main problem you want this to solve?<span class="req" aria-hidden="true">*</span></label>
+            <div class="question__body">
+              <textarea class="textarea" id="q-problem" name="problem" rows="4" placeholder="e.g., &quot;I'm losing track of bookings in my DMs and missing sales.&quot; or &quot;My team wastes 2 hours a day on spreadsheets.&quot;" aria-required="true" aria-describedby="err-problem"></textarea>
+            </div>
+            <div class="error" id="err-problem" role="alert"><span>Just need this one to keep going →</span></div>
+          </div>
+
+          <fieldset class="question" data-question="currentSolution" data-required="true" data-type="single">
+            <legend class="question__label" id="lbl-current">How are you handling it today?<span class="req" aria-hidden="true">*</span></legend>
+            <div class="question__body">
+              <div class="cards cards--stack" role="radiogroup" aria-labelledby="lbl-current" aria-required="true" aria-describedby="err-currentSolution">
+                <button type="button" class="card card--row" role="radio" aria-checked="false" data-value="Duct tape and hope" aria-label="Duct tape and hope — WhatsApp, calls, sticky notes">
+                  <span class="card__emoji" aria-hidden="true">🧵</span>
+                  <span class="card__text"><span class="card__title">Duct tape and hope</span><span class="card__desc">WhatsApp, calls, sticky notes</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card card--row" role="radio" aria-checked="false" data-value="The spreadsheet dungeon" aria-label="The spreadsheet dungeon — Excel or Sheets doing their best">
+                  <span class="card__emoji" aria-hidden="true">📊</span>
+                  <span class="card__text"><span class="card__title">The spreadsheet dungeon</span><span class="card__desc">Excel/Sheets doing their best</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card card--row" role="radio" aria-checked="false" data-value="An old website" aria-label="An old website — It exists. It's tired. It works. Kind of.">
+                  <span class="card__emoji" aria-hidden="true">🏚️</span>
+                  <span class="card__text"><span class="card__title">An old website</span><span class="card__desc">It exists. It's tired. It works. Kind of.</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card card--row" role="radio" aria-checked="false" data-value="Honestly, nothing yet" aria-label="Honestly, nothing yet — We're winging it">
+                  <span class="card__emoji" aria-hidden="true">🤷</span>
+                  <span class="card__text"><span class="card__title">Honestly, nothing yet</span><span class="card__desc">We're winging it</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card card--row" role="radio" aria-checked="false" data-value="Something else" data-reveal="reveal-other" aria-label="Something else — tell me what you're using" aria-controls="reveal-other">
+                  <span class="card__emoji" aria-hidden="true">🧰</span>
+                  <span class="card__text"><span class="card__title">Something else</span><span class="card__desc">Tell me what it is</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+              </div>
+              <div class="reveal" id="reveal-other" aria-hidden="true">
+                <div class="reveal__inner">
+                  <label class="sr-only" for="q-currentSolutionOther">Tell me what you're using.</label>
+                  <input class="input" id="q-currentSolutionOther" name="currentSolutionOther" type="text" placeholder="Tell me what you're using." tabindex="-1" />
+                </div>
+              </div>
+            </div>
+            <div class="error" id="err-currentSolution" role="alert"><span>Just need this one to keep going →</span></div>
+          </fieldset>
+
+          <div class="question" data-question="sixMonths" data-type="text">
+            <label class="question__label" for="q-sixMonths">If this works perfectly, what changes in 6 months?<span class="opt">Optional</span></label>
+            <div class="question__body">
+              <textarea class="textarea" id="q-sixMonths" name="sixMonths" rows="4" placeholder="Dream a little."></textarea>
+            </div>
+          </div>
+
+          <div class="nav">
+            <button type="button" class="btn btn--ghost" data-action="back">← Back</button>
+            <button type="button" class="btn btn--primary" data-action="next">Next <span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 3 — THE PEOPLE
+           ========================================================= -->
+      <section class="screen" data-screen="3" data-step="3" aria-labelledby="h-s3" tabindex="-1">
+        <div class="stagger">
+          <header class="section-head">
+            <div class="section-emoji" aria-hidden="true">👥</div>
+            <span class="section-kicker">The people</span>
+            <h2 id="h-s3">Who's using this?</h2>
+          </header>
+
+          <fieldset class="question" data-question="users" data-required="true" data-type="multi">
+            <legend class="question__label" id="lbl-users">Who lives in this world?<span class="req" aria-hidden="true">*</span><span class="opt">Pick all that apply</span></legend>
+            <div class="question__body">
+              <div class="cards cards--3-2" role="group" aria-labelledby="lbl-users" aria-describedby="err-users">
+                <button type="button" class="card" role="checkbox" aria-checked="false" data-value="My customers" aria-label="My customers — people buying from me">
+                  <span class="card__emoji" aria-hidden="true">👤</span>
+                  <span class="card__text"><span class="card__title">My customers</span><span class="card__desc">People buying from me</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="checkbox" aria-checked="false" data-value="My team" aria-label="My team — staff who manage things">
+                  <span class="card__emoji" aria-hidden="true">👥</span>
+                  <span class="card__text"><span class="card__title">My team</span><span class="card__desc">Staff who manage things</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="checkbox" aria-checked="false" data-value="My partners" aria-label="My partners — suppliers, vendors, collaborators">
+                  <span class="card__emoji" aria-hidden="true">🤝</span>
+                  <span class="card__text"><span class="card__title">My partners</span><span class="card__desc">Suppliers, vendors, collaborators</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="checkbox" aria-checked="false" data-value="Just me" aria-label="Just me — I'm the only user">
+                  <span class="card__emoji" aria-hidden="true">🔐</span>
+                  <span class="card__text"><span class="card__title">Just me</span><span class="card__desc">I'm the only user</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="checkbox" aria-checked="false" data-value="The public" aria-label="The public — anyone can browse">
+                  <span class="card__emoji" aria-hidden="true">🌍</span>
+                  <span class="card__text"><span class="card__title">The public</span><span class="card__desc">Anyone can browse</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+              </div>
+            </div>
+            <div class="error" id="err-users" role="alert"><span>Just need this one to keep going →</span></div>
+          </fieldset>
+
+          <fieldset class="question" data-question="device" data-required="true" data-type="single">
+            <legend class="question__label" id="lbl-device">What device will they mostly use?<span class="req" aria-hidden="true">*</span></legend>
+            <div class="question__body">
+              <div class="cards cards--3" role="radiogroup" aria-labelledby="lbl-device" aria-required="true" aria-describedby="err-device">
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Desktop" aria-label="Desktop — at a desk, focused">
+                  <span class="card__emoji" aria-hidden="true">💻</span>
+                  <span class="card__text"><span class="card__title">Desktop</span><span class="card__desc">At a desk, focused</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Phone" aria-label="Phone — on the go, quick taps">
+                  <span class="card__emoji" aria-hidden="true">📱</span>
+                  <span class="card__text"><span class="card__title">Phone</span><span class="card__desc">On the go, quick taps</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Not sure" aria-label="Not sure — help me figure it out">
+                  <span class="card__emoji" aria-hidden="true">🤷</span>
+                  <span class="card__text"><span class="card__title">Not sure</span><span class="card__desc">Help me figure it out</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+              </div>
+            </div>
+            <div class="error" id="err-device" role="alert"><span>Just need this one to keep going →</span></div>
+          </fieldset>
+
+          <div class="nav">
+            <button type="button" class="btn btn--ghost" data-action="back">← Back</button>
+            <button type="button" class="btn btn--primary" data-action="next">Next <span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 4 — THE FEATURES
+           ========================================================= -->
+      <section class="screen" data-screen="4" data-step="4" aria-labelledby="h-s4" tabindex="-1">
+        <div class="stagger">
+          <header class="section-head">
+            <div class="section-emoji" aria-hidden="true">⚡</div>
+            <span class="section-kicker">The features</span>
+            <h2 id="h-s4">What should it do?</h2>
+            <p class="helper">Tap everything you think you'll need. Don't overthink — you can change this later.</p>
+          </header>
+
+          <fieldset class="question" data-question="features" data-type="multi">
+            <legend class="question__label" id="lbl-features">Feature selection<span class="opt">Pick as many as you like</span></legend>
+            <div class="question__body">
+              <div class="cards cards--3" role="group" aria-labelledby="lbl-features">
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Accounts" aria-label="Accounts"><span class="card__emoji" aria-hidden="true">🔐</span><span class="card__title">Accounts</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Payments" aria-label="Payments"><span class="card__emoji" aria-hidden="true">💳</span><span class="card__title">Payments</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Bookings" aria-label="Bookings"><span class="card__emoji" aria-hidden="true">📅</span><span class="card__title">Bookings</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Orders" aria-label="Orders"><span class="card__emoji" aria-hidden="true">🧾</span><span class="card__title">Orders</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Messaging" aria-label="Messaging"><span class="card__emoji" aria-hidden="true">💬</span><span class="card__title">Messaging</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Dashboard" aria-label="Dashboard"><span class="card__emoji" aria-hidden="true">📊</span><span class="card__title">Dashboard</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Notifications" aria-label="Notifications"><span class="card__emoji" aria-hidden="true">🔔</span><span class="card__title">Notifications</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Reports" aria-label="Reports"><span class="card__emoji" aria-hidden="true">📈</span><span class="card__title">Reports</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Search" aria-label="Search"><span class="card__emoji" aria-hidden="true">🔎</span><span class="card__title">Search</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="Social login" aria-label="Social login"><span class="card__emoji" aria-hidden="true">🌐</span><span class="card__title">Social login</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="AI (maybe)" aria-label="AI, maybe"><span class="card__emoji" aria-hidden="true">🤖</span><span class="card__title">AI (maybe)</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+                <button type="button" class="card card--tile" role="checkbox" aria-checked="false" data-value="File uploads" aria-label="File uploads"><span class="card__emoji" aria-hidden="true">🗂️</span><span class="card__title">File uploads</span><span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span></button>
+              </div>
+              <div class="counter" id="featureCounter" aria-live="polite">Nothing picked yet — go on, tap a few.</div>
+            </div>
+          </fieldset>
+
+          <div class="question" data-question="mustHave" data-required="true" data-type="text">
+            <label class="question__label" for="q-mustHave">If you could only launch with ONE — which is it?<span class="req" aria-hidden="true">*</span></label>
+            <div class="question__body">
+              <input class="input" id="q-mustHave" name="mustHave" type="text" placeholder="Pick one." aria-required="true" aria-describedby="err-mustHave" list="featureList" />
+              <datalist id="featureList"></datalist>
+            </div>
+            <div class="error" id="err-mustHave" role="alert"><span>Just need this one to keep going →</span></div>
+          </div>
+
+          <div class="question" data-question="integrations" data-type="text">
+            <label class="question__label" for="q-integrations">Anything you already use that this needs to connect with?<span class="opt">Optional</span></label>
+            <div class="question__body">
+              <textarea class="textarea" id="q-integrations" name="integrations" rows="3" placeholder="Instagram, QuickBooks, Google Calendar..."></textarea>
+            </div>
+          </div>
+
+          <div class="nav">
+            <button type="button" class="btn btn--ghost" data-action="back">← Back</button>
+            <button type="button" class="btn btn--primary" data-action="next">Next <span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 5 — THE VIBE
+           ========================================================= -->
+      <section class="screen" data-screen="5" data-step="5" aria-labelledby="h-s5" tabindex="-1">
+        <div class="stagger">
+          <header class="section-head">
+            <div class="section-emoji" aria-hidden="true">🎨</div>
+            <span class="section-kicker">The vibe</span>
+            <h2 id="h-s5">What should it feel like?</h2>
+          </header>
+
+          <fieldset class="question" data-question="personality" data-required="true" data-type="single">
+            <legend class="question__label" id="lbl-personality">Pick the personality that fits.<span class="req" aria-hidden="true">*</span></legend>
+            <div class="question__body">
+              <div class="cards cards--2" role="radiogroup" aria-labelledby="lbl-personality" aria-required="true" aria-describedby="err-personality">
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Serious and Elegant" aria-label="Serious and Elegant — luxury, serif fonts, understated colors">
+                  <span class="card__emoji" aria-hidden="true">🎩</span>
+                  <span class="card__text"><span class="card__title">Serious &amp; Elegant</span><span class="card__desc">Luxury, serif fonts, understated colors</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Minimal and Simple" aria-label="Minimal and Simple — clutter-free, white space">
+                  <span class="card__emoji" aria-hidden="true">🤍</span>
+                  <span class="card__text"><span class="card__title">Minimal &amp; Simple</span><span class="card__desc">Clutter-free, lots of white space</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Plain and Neutral" aria-label="Plain and Neutral — functional, corporate stability">
+                  <span class="card__emoji" aria-hidden="true">🏢</span>
+                  <span class="card__text"><span class="card__title">Plain &amp; Neutral</span><span class="card__desc">Functional, corporate stability</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Bold and Confident" aria-label="Bold and Confident — bright colors, impactful typography">
+                  <span class="card__emoji" aria-hidden="true">🔥</span>
+                  <span class="card__text"><span class="card__title">Bold &amp; Confident</span><span class="card__desc">Bright colors, impactful typography</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Calm and Peaceful" aria-label="Calm and Peaceful — soothing, natural tones">
+                  <span class="card__emoji" aria-hidden="true">🌿</span>
+                  <span class="card__text"><span class="card__title">Calm &amp; Peaceful</span><span class="card__desc">Soothing, natural tones</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Startup and Upbeat" aria-label="Startup and Upbeat — energetic, modern gradients">
+                  <span class="card__emoji" aria-hidden="true">🚀</span>
+                  <span class="card__text"><span class="card__title">Startup &amp; Upbeat</span><span class="card__desc">Energetic, modern gradients</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card" role="radio" aria-checked="false" data-value="Playful and Fun" aria-label="Playful and Fun — vibrant, hand-drawn illustrations, interactive">
+                  <span class="card__emoji" aria-hidden="true">🎈</span>
+                  <span class="card__text"><span class="card__title">Playful &amp; Fun</span><span class="card__desc">Vibrant, hand-drawn illustrations, interactive</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+              </div>
+            </div>
+            <div class="error" id="err-personality" role="alert"><span>Just need this one to keep going →</span></div>
+          </fieldset>
+
+          <div class="question" data-question="inspirationUrl" data-type="url">
+            <label class="question__label" for="q-inspirationUrl">Drop a link to something you love the look of.<span class="opt">Optional</span></label>
+            <p class="helper" id="help-url" style="margin:4px 0 0;">Doesn't have to be in your industry. Just something you'd want the energy of.</p>
+            <div class="question__body">
+              <input class="input" id="q-inspirationUrl" name="inspirationUrl" type="url" inputmode="url" placeholder="https://..." aria-describedby="help-url err-inspirationUrl" />
+            </div>
+            <div class="error" id="err-inspirationUrl" role="alert"><span>Hmm, that link looks a little off — mind double-checking it?</span></div>
+          </div>
+
+          <div class="question" data-question="antiVibe" data-type="text">
+            <label class="question__label" for="q-antiVibe">Anything you DON'T want it to feel like?<span class="opt">Optional</span></label>
+            <div class="question__body">
+              <textarea class="textarea" id="q-antiVibe" name="antiVibe" rows="3" placeholder="&quot;I hate when sites are cluttered. Or when they feel like a 2010 WordPress theme.&quot;"></textarea>
+            </div>
+          </div>
+
+          <div class="nav">
+            <button type="button" class="btn btn--ghost" data-action="back">← Back</button>
+            <button type="button" class="btn btn--primary" data-action="next">Next <span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 6 — THE REALITY
+           ========================================================= -->
+      <section class="screen" data-screen="6" data-step="6" aria-labelledby="h-s6" tabindex="-1">
+        <div class="stagger">
+          <header class="section-head">
+            <div class="section-emoji" aria-hidden="true">🚀</div>
+            <span class="section-kicker">The reality</span>
+            <h2 id="h-s6">Last one. Real talk.</h2>
+          </header>
+
+          <fieldset class="question" data-question="timeline" data-required="true" data-type="single">
+            <legend class="question__label" id="lbl-timeline">When do you want this live?<span class="req" aria-hidden="true">*</span></legend>
+            <div class="question__body">
+              <div class="cards cards--stack" role="radiogroup" aria-labelledby="lbl-timeline" aria-required="true" aria-describedby="err-timeline">
+                <button type="button" class="card card--row" role="radio" aria-checked="false" data-value="No rush" aria-label="No rush — I'm exploring">
+                  <span class="card__emoji" aria-hidden="true">🐢</span>
+                  <span class="card__text"><span class="card__title">No rush</span><span class="card__desc">I'm exploring</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card card--row" role="radio" aria-checked="false" data-value="A few months" aria-label="A few months — let's plan properly">
+                  <span class="card__emoji" aria-hidden="true">🐇</span>
+                  <span class="card__text"><span class="card__title">A few months</span><span class="card__desc">Let's plan properly</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+                <button type="button" class="card card--row" role="radio" aria-checked="false" data-value="ASAP" aria-label="ASAP — I need this yesterday">
+                  <span class="card__emoji" aria-hidden="true">🚀</span>
+                  <span class="card__text"><span class="card__title">ASAP</span><span class="card__desc">I need this yesterday</span></span>
+                  <span class="card__check" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3"/></svg></span>
+                </button>
+              </div>
+            </div>
+            <div class="error" id="err-timeline" role="alert"><span>Just need this one to keep going →</span></div>
+          </fieldset>
+
+          <div class="question" data-question="decisionMakers" data-type="text">
+            <label class="question__label" for="q-decisionMakers">Who else needs to say yes before this moves?<span class="opt">Optional</span></label>
+            <div class="question__body">
+              <input class="input" id="q-decisionMakers" name="decisionMakers" type="text" placeholder="&quot;Just me&quot; or &quot;My business partner and my accountant&quot;" />
+            </div>
+          </div>
+
+          <div class="nav">
+            <button type="button" class="btn btn--ghost" data-action="back">← Back</button>
+            <button type="button" class="btn btn--primary" data-action="next">Send it <span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 7 — CLOSING
+           ========================================================= -->
+      <section class="screen closing" data-screen="7" aria-labelledby="h-s7" tabindex="-1">
+        <div class="stagger">
+          <div class="hero-illustration" role="img" aria-label="Small celebratory abstract shapes in indigo and coral">
+            <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <rect width="640" height="280" fill="#FFFFFF"/>
+              <circle cx="320" cy="140" r="96" fill="#5B4BFF" opacity="0.07"/>
+              <circle cx="320" cy="140" r="60" fill="#5B4BFF" opacity="0.10"/>
+              <g class="float-a">
+                <circle cx="320" cy="140" r="34" fill="#5B4BFF"/>
+                <path d="M304 140 l11 11 l22 -24" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </g>
+              <g class="float-b"><rect x="190" y="70" width="26" height="26" rx="7" fill="#FF6B6B"/></g>
+              <g class="float-c"><circle cx="452" cy="88" r="12" fill="#FF6B6B" opacity="0.85"/></g>
+              <g class="float-a"><path d="M448 190 l14 -24 l14 24 z" fill="#5B4BFF" opacity="0.7"/></g>
+              <g class="float-b"><circle cx="176" cy="196" r="8" fill="#5B4BFF" opacity="0.5"/></g>
+              <g class="float-c"><path d="M246 214 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 z" fill="#FF6B6B"/></g>
+              <g class="float-a"><path d="M396 46 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3 z" fill="#5B4BFF"/></g>
+              <path d="M120 120 q20 -20 40 0 t40 0" stroke="#FF6B6B" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.6"/>
+              <path d="M480 150 q20 -20 40 0 t40 0" stroke="#5B4BFF" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.5"/>
+            </svg>
+          </div>
+
+          <h1 id="h-s7"><span aria-hidden="true">🎬</span> That's everything<span id="closingName"></span>.</h1>
+
+          <div class="lede">
+            <p>Thanks for sharing that with me. I'm going to take everything you've told me and sketch out a first draft of what this could look like — a rough flow, a few screens, the shape of the thing.</p>
+            <p>I'll send it over before our call so we can react to something real, not just talk in circles.</p>
+            <p><strong>Talk soon.</strong></p>
+          </div>
+
+          <div>
+            <div class="closing-actions">
+              <button type="button" class="btn btn--primary btn--lg" data-action="submit" id="submitBtn">Send it <span class="arrow" aria-hidden="true">→</span></button>
+              <button type="button" class="btn btn--ghost" data-action="back">← Tweak an answer</button>
+            </div>
+            <div class="sent-state" id="sentState" role="status">
+              <span class="tick" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M2.5 7.5 L6 10.5 L11.5 3.5"/></svg></span>
+              <span id="sentMessage">Sent! It's on its way to me. Keep an eye on your inbox.</span>
+            </div>
+            <p class="ps">P.S. If anything changes between now and our call, just reply to the email. This is a living document, not a contract.</p>
+          </div>
+
+          <details class="summary" id="summary">
+            <summary>Your answers, at a glance</summary>
+            <dl id="summaryList"></dl>
+          </details>
+        </div>
+      </section>
+
+    </form>
+  </main>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* =========================================================
+       CONFIG
+       Set SUBMIT_ENDPOINT to a URL (e.g. Formspree, your API) to POST
+       answers as JSON. Leave empty to keep everything client-side
+       (answers are logged to the console and kept in sessionStorage).
+       ========================================================= */
+    var SUBMIT_ENDPOINT = "";
+    var STORAGE_KEY = "intake-form-v1";
+    var TOTAL_STEPS = 6;
+    var LAST_SCREEN = 7;
+
+    var form = document.getElementById("intakeForm");
+    var screens = Array.prototype.slice.call(document.querySelectorAll(".screen"));
+    var progress = document.getElementById("progress");
+    var progressFill = document.getElementById("progressFill");
+    var progressLabel = document.getElementById("progressLabel");
+    var savedIndicator = document.getElementById("savedIndicator");
+    var liveRegion = document.getElementById("liveRegion");
+    var featureCounter = document.getElementById("featureCounter");
+    var featureList = document.getElementById("featureList");
+
+    var state = {
+      screen: 0,
+      submitted: false,
+      answers: {
+        name: "",
+        projectName: "",
+        platform: "",
+        problem: "",
+        currentSolution: "",
+        currentSolutionOther: "",
+        sixMonths: "",
+        users: [],
+        device: "",
+        features: [],
+        mustHave: "",
+        integrations: "",
+        personality: "",
+        inspirationUrl: "",
+        antiVibe: "",
+        timeline: "",
+        decisionMakers: ""
+      }
+    };
+
+    var current = 0;
+    var transitioning = false;
+
+    /* =========================================================
+       STORAGE
+       ========================================================= */
+    function save(showIndicator) {
+      state.screen = current;
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) { /* storage unavailable — fine, keep going */ }
+      if (showIndicator) flashSaved();
+    }
+
+    var savedTimer = null;
+    function flashSaved() {
+      savedIndicator.classList.add("is-visible");
+      clearTimeout(savedTimer);
+      savedTimer = setTimeout(function () { savedIndicator.classList.remove("is-visible"); }, 1600);
+    }
+
+    function load() {
+      try {
+        var raw = sessionStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        var saved = JSON.parse(raw);
+        if (!saved || !saved.answers) return false;
+        Object.keys(state.answers).forEach(function (k) {
+          if (saved.answers[k] !== undefined) state.answers[k] = saved.answers[k];
+        });
+        state.screen = typeof saved.screen === "number" ? saved.screen : 0;
+        state.submitted = !!saved.submitted;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    /* =========================================================
+       HYDRATE UI FROM STATE
+       ========================================================= */
+    function hydrate() {
+      var a = state.answers;
+      Object.keys(a).forEach(function (key) {
+        var q = form.querySelector('[data-question="' + key + '"]');
+        var input = form.querySelector('[name="' + key + '"]');
+        if (input && typeof a[key] === "string") input.value = a[key];
+        if (!q) return;
+        var type = q.getAttribute("data-type");
+        if (type === "single" || type === "multi") {
+          var vals = Array.isArray(a[key]) ? a[key] : (a[key] ? [a[key]] : []);
+          q.querySelectorAll(".card").forEach(function (card) {
+            card.setAttribute("aria-checked", vals.indexOf(card.getAttribute("data-value")) > -1 ? "true" : "false");
+          });
+        }
+      });
+      syncReveal();
+      updateFeatureCounter(false);
+    }
+
+    /* =========================================================
+       CARD SELECTION
+       ========================================================= */
+    form.addEventListener("click", function (e) {
+      var card = e.target.closest(".card");
+      if (!card) return;
+      var q = card.closest("[data-question]");
+      var key = q.getAttribute("data-question");
+      var type = q.getAttribute("data-type");
+      var value = card.getAttribute("data-value");
+
+      if (type === "single") {
+        q.querySelectorAll(".card").forEach(function (c) {
+          c.setAttribute("aria-checked", c === card ? "true" : "false");
+        });
+        state.answers[key] = value;
+      } else if (type === "multi") {
+        var on = card.getAttribute("aria-checked") !== "true";
+        card.setAttribute("aria-checked", on ? "true" : "false");
+        var list = state.answers[key].slice();
+        var idx = list.indexOf(value);
+        if (on && idx === -1) list.push(value);
+        if (!on && idx > -1) list.splice(idx, 1);
+        state.answers[key] = list;
+        if (key === "features") updateFeatureCounter(true);
+      }
+
+      clearError(q);
+      if (key === "currentSolution") syncReveal(true);
+      save(true);
+    });
+
+    /* Arrow-key navigation inside radio groups & grids */
+    form.addEventListener("keydown", function (e) {
+      var card = e.target.closest && e.target.closest(".card");
+      if (!card) return;
+      var keys = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"];
+      if (keys.indexOf(e.key) === -1) return;
+      var group = card.parentElement;
+      var cards = Array.prototype.slice.call(group.querySelectorAll(".card"));
+      var i = cards.indexOf(card);
+      var forward = e.key === "ArrowRight" || e.key === "ArrowDown";
+      var next = cards[(i + (forward ? 1 : -1) + cards.length) % cards.length];
+      e.preventDefault();
+      next.focus();
+      if (card.getAttribute("role") === "radio") next.click();
+    });
+
+    /* Text inputs */
+    form.addEventListener("input", function (e) {
+      var el = e.target;
+      if (!el.name || !(el.name in state.answers)) return;
+      state.answers[el.name] = el.value;
+      var q = el.closest("[data-question]");
+      if (q && q.classList.contains("has-error") && isQuestionValid(q)) clearError(q);
+      debouncedSave();
+    });
+
+    var saveDebounce = null;
+    function debouncedSave() {
+      clearTimeout(saveDebounce);
+      saveDebounce = setTimeout(function () { save(true); }, 450);
+    }
+
+    /* Enter key advances on single-line inputs */
+    form.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" || e.shiftKey || e.isComposing) return;
+      var el = e.target;
+      if (el.tagName === "INPUT" && el.type !== "button") {
+        e.preventDefault();
+        var screen = el.closest(".screen");
+        var nextBtn = screen.querySelector('[data-action="next"]');
+        if (nextBtn) nextBtn.click();
+      }
+    });
+
+    form.addEventListener("submit", function (e) { e.preventDefault(); });
+
+    /* =========================================================
+       CONDITIONAL REVEAL (Q2.2 "Something else")
+       ========================================================= */
+    function syncReveal(focusInput) {
+      var reveal = document.getElementById("reveal-other");
+      var input = document.getElementById("q-currentSolutionOther");
+      var trigger = form.querySelector('[data-reveal="reveal-other"]');
+      var open = state.answers.currentSolution === "Something else";
+      reveal.classList.toggle("is-open", open);
+      reveal.setAttribute("aria-hidden", open ? "false" : "true");
+      trigger.setAttribute("aria-expanded", open ? "true" : "false");
+      input.tabIndex = open ? 0 : -1;
+      if (open && focusInput) {
+        setTimeout(function () { input.focus({ preventScroll: true }); }, 250);
+      }
+    }
+
+    /* =========================================================
+       FEATURE COUNTER + DATALIST
+       ========================================================= */
+    var counterMessages = [
+      "Nothing picked yet — go on, tap a few.",
+      "Nice start.",
+      "Now we're cooking.",
+      "Love it — the shape is forming.",
+      "Ambitious. I like it.",
+      "A proper platform. Let's do it."
+    ];
+    function updateFeatureCounter(bump) {
+      var n = state.answers.features.length;
+      var msg;
+      if (n === 0) msg = counterMessages[0];
+      else if (n <= 2) msg = counterMessages[1];
+      else if (n <= 4) msg = counterMessages[2];
+      else if (n <= 6) msg = counterMessages[3];
+      else if (n <= 9) msg = counterMessages[4];
+      else msg = counterMessages[5];
+      featureCounter.innerHTML = n === 0 ? msg : "<strong>" + n + "</strong> picked · " + msg;
+      if (bump) {
+        featureCounter.classList.remove("bump");
+        void featureCounter.offsetWidth;
+        featureCounter.classList.add("bump");
+      }
+      featureList.innerHTML = "";
+      state.answers.features.forEach(function (f) {
+        var opt = document.createElement("option");
+        opt.value = f;
+        featureList.appendChild(opt);
+      });
+    }
+
+    /* =========================================================
+       VALIDATION
+       ========================================================= */
+    function isQuestionValid(q) {
+      var key = q.getAttribute("data-question");
+      var type = q.getAttribute("data-type");
+      var required = q.getAttribute("data-required") === "true";
+      var val = state.answers[key];
+
+      if (type === "url") {
+        if (!val || !val.trim()) return !required;
+        return looksLikeUrl(val.trim());
+      }
+      if (!required) return true;
+      if (type === "multi") return Array.isArray(val) && val.length > 0;
+      return typeof val === "string" && val.trim().length > 0;
+    }
+
+    function looksLikeUrl(v) {
+      var candidate = /^https?:\/\//i.test(v) ? v : "https://" + v;
+      try {
+        var u = new URL(candidate);
+        return /\./.test(u.hostname);
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function showError(q) {
+      q.classList.add("has-error");
+      q.classList.remove("shake");
+      void q.offsetWidth;
+      q.classList.add("shake");
+      var field = q.querySelector(".input, .textarea");
+      if (field) field.setAttribute("aria-invalid", "true");
+    }
+    function clearError(q) {
+      q.classList.remove("has-error", "shake");
+      var field = q.querySelector(".input, .textarea");
+      if (field) field.removeAttribute("aria-invalid");
+    }
+
+    function validateScreen(screenEl) {
+      var questions = Array.prototype.slice.call(screenEl.querySelectorAll("[data-question]"));
+      var firstInvalid = null;
+      questions.forEach(function (q) {
+        if (isQuestionValid(q)) {
+          clearError(q);
+        } else {
+          showError(q);
+          if (!firstInvalid) firstInvalid = q;
+        }
+      });
+      if (firstInvalid) {
+        var focusable = firstInvalid.querySelector(".input, .textarea, .card");
+        firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (focusable) setTimeout(function () { focusable.focus({ preventScroll: true }); }, 300);
+        announce("A couple of answers are still needed on this step.");
+        return false;
+      }
+      return true;
+    }
+
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+    form.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-action]");
+      if (!btn) return;
+      var action = btn.getAttribute("data-action");
+      if (action === "start") goTo(1);
+      if (action === "resume") goTo(Math.max(1, Math.min(state.screen, LAST_SCREEN)));
+      if (action === "next") {
+        var screenEl = screens[current];
+        if (!validateScreen(screenEl)) return;
+        // Normalise URL on the way out
+        if (current === 5 && state.answers.inspirationUrl && !/^https?:\/\//i.test(state.answers.inspirationUrl.trim())) {
+          state.answers.inspirationUrl = "https://" + state.answers.inspirationUrl.trim();
+          document.getElementById("q-inspirationUrl").value = state.answers.inspirationUrl;
+        }
+        goTo(current + 1);
+      }
+      if (action === "back") goTo(current - 1, true);
+      if (action === "submit") submit();
+      if (action === "edit") goTo(parseInt(btn.getAttribute("data-target"), 10), true);
+    });
+
+    function goTo(index, backwards) {
+      if (transitioning || index < 0 || index > LAST_SCREEN || index === current) return;
+      transitioning = true;
+
+      var from = screens[current];
+      var to = screens[index];
+      var dirBack = backwards || index < current;
+
+      from.classList.remove("is-entering", "is-entering-back");
+      from.classList.add(dirBack ? "is-leaving-back" : "is-leaving");
+
+      setTimeout(function () {
+        from.classList.remove("is-active", "is-leaving", "is-leaving-back");
+        to.classList.add("is-active", dirBack ? "is-entering-back" : "is-entering");
+        current = index;
+        updateProgress();
+        if (index === LAST_SCREEN) renderClosing();
+        window.scrollTo({ top: 0, behavior: "auto" });
+        to.focus({ preventScroll: true });
+        var heading = to.querySelector("h1, h2");
+        if (heading) announce(heading.textContent.trim());
+        save(false);
+        setTimeout(function () {
+          to.classList.remove("is-entering", "is-entering-back");
+          transitioning = false;
+        }, 560);
+      }, 260);
+    }
+
+    function updateProgress() {
+      var step = parseInt((screens[current].getAttribute("data-step") || "0"), 10);
+      var inFlow = step > 0;
+      progress.classList.toggle("is-visible", inFlow || current === LAST_SCREEN);
+      if (current === LAST_SCREEN) {
+        progressFill.style.width = "100%";
+        progressLabel.textContent = "All done 🎉";
+      } else if (inFlow) {
+        // Fill reflects completed steps + a nudge into the current one
+        var pct = ((step - 1) / TOTAL_STEPS) * 100 + (100 / TOTAL_STEPS) * 0.5;
+        progressFill.style.width = pct + "%";
+        progressLabel.textContent = "Step " + step + " of " + TOTAL_STEPS;
+      } else {
+        progressFill.style.width = "0%";
+      }
+    }
+
+    function announce(msg) {
+      liveRegion.textContent = "";
+      setTimeout(function () { liveRegion.textContent = msg; }, 60);
+    }
+
+    /* =========================================================
+       CLOSING / SUMMARY
+       ========================================================= */
+    var summaryFields = [
+      ["name", "Your name", 1],
+      ["projectName", "Project name", 1],
+      ["platform", "Platform", 1],
+      ["problem", "Main problem", 2],
+      ["currentSolution", "How it's handled today", 2],
+      ["sixMonths", "In 6 months", 2],
+      ["users", "Who's using it", 3],
+      ["device", "Main device", 3],
+      ["features", "Features", 4],
+      ["mustHave", "The ONE must-have", 4],
+      ["integrations", "Connects with", 4],
+      ["personality", "Personality", 5],
+      ["inspirationUrl", "Inspiration link", 5],
+      ["antiVibe", "Definitely not", 5],
+      ["timeline", "Timeline", 6],
+      ["decisionMakers", "Who else says yes", 6]
+    ];
+
+    function renderClosing() {
+      var a = state.answers;
+      var firstName = (a.name || "").trim().split(/[\s,]+/)[0];
+      document.getElementById("closingName").textContent = firstName ? ", " + firstName : "";
+
+      var dl = document.getElementById("summaryList");
+      dl.innerHTML = "";
+      summaryFields.forEach(function (f) {
+        var v = a[f[0]];
+        if (f[0] === "currentSolution" && v === "Something else" && a.currentSolutionOther) {
+          v = "Something else: " + a.currentSolutionOther;
+        }
+        if (Array.isArray(v)) v = v.join(", ");
+        var dt = document.createElement("dt");
+        dt.textContent = f[1];
+        var edit = document.createElement("button");
+        edit.type = "button";
+        edit.className = "edit-link";
+        edit.setAttribute("data-action", "edit");
+        edit.setAttribute("data-target", String(f[2]));
+        edit.setAttribute("aria-label", "Edit " + f[1]);
+        edit.textContent = "Edit";
+        dt.appendChild(edit);
+        var dd = document.createElement("dd");
+        dd.textContent = v && String(v).trim() ? v : "—";
+        dl.appendChild(dt);
+        dl.appendChild(dd);
+      });
+
+      if (state.submitted) markSent(false);
+    }
+
+    function buildPayload() {
+      var a = JSON.parse(JSON.stringify(state.answers));
+      if (a.currentSolution !== "Something else") a.currentSolutionOther = "";
+      return {
+        submittedAt: new Date().toISOString(),
+        source: "client-intake-form",
+        answers: a
+      };
+    }
+
+    function submit() {
+      var btn = document.getElementById("submitBtn");
+      if (state.submitted) { burstConfetti(); return; }
+      btn.disabled = true;
+      btn.innerHTML = "Sending…";
+      var payload = buildPayload();
+
+      var done = function (ok) {
+        btn.disabled = false;
+        if (ok) {
+          state.submitted = true;
+          save(false);
+          markSent(true);
+        } else {
+          btn.innerHTML = 'Try again <span class="arrow" aria-hidden="true">→</span>';
+          document.getElementById("sentMessage").textContent =
+            "Hmm, that didn't go through. Your answers are safe — give it another go in a sec.";
+          var s = document.getElementById("sentState");
+          s.style.background = "#FF6B6B12";
+          s.style.borderColor = "#FF6B6B40";
+          s.style.color = "#9B1C1C";
+          s.querySelector(".tick").style.background = "#FF6B6B";
+          s.classList.add("is-visible");
+        }
+      };
+
+      if (!SUBMIT_ENDPOINT) {
+        console.log("[Intake] Submission payload:", payload);
+        setTimeout(function () { done(true); }, 700);
+        return;
+      }
+
+      fetch(SUBMIT_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(function (r) { done(r.ok); })
+        .catch(function () { done(false); });
+    }
+
+    function markSent(celebrate) {
+      var btn = document.getElementById("submitBtn");
+      btn.innerHTML = 'Sent <span aria-hidden="true">✓</span>';
+      btn.style.background = "var(--success)";
+      btn.setAttribute("aria-disabled", "true");
+      var s = document.getElementById("sentState");
+      s.removeAttribute("style");
+      s.querySelector(".tick").removeAttribute("style");
+      document.getElementById("sentMessage").textContent = "Sent! It's on its way to me. Keep an eye on your inbox.";
+      s.classList.add("is-visible");
+      if (celebrate) burstConfetti();
+    }
+
+    function burstConfetti() {
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var host = document.getElementById("confetti");
+      var colors = ["#5B4BFF", "#FF6B6B", "#10B981", "#FFC24B", "#7B6DFF"];
+      var frag = document.createDocumentFragment();
+      for (var i = 0; i < 90; i++) {
+        var p = document.createElement("i");
+        p.style.left = Math.random() * 100 + "vw";
+        p.style.background = colors[i % colors.length];
+        p.style.animationDuration = 1.8 + Math.random() * 1.6 + "s";
+        p.style.animationDelay = Math.random() * 0.4 + "s";
+        p.style.setProperty("--dx", (Math.random() * 200 - 100) + "px");
+        p.style.setProperty("--rot", (Math.random() * 900 - 450) + "deg");
+        if (i % 3 === 0) { p.style.borderRadius = "50%"; p.style.width = "10px"; p.style.height = "10px"; }
+        frag.appendChild(p);
+      }
+      host.appendChild(frag);
+      setTimeout(function () { host.innerHTML = ""; }, 4200);
+    }
+
+    /* =========================================================
+       INIT
+       ========================================================= */
+    var hasSaved = load();
+    hydrate();
+    if (hasSaved && state.screen > 0) {
+      document.getElementById("resumeNote").hidden = false;
+    }
+    updateProgress();
+  })();
+  </script>
+</body>
+</html>
