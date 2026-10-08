@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Project Profile — Pre-call</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/profile.css" />
+</head>
+<body>
+
+  <!-- Toolbar (hidden when printing) -->
+  <header class="toolbar" role="toolbar" aria-label="Profile actions">
+    <div class="toolbar__title">
+      <span class="dot" aria-hidden="true"></span>
+      Pre-call · Project profile
+    </div>
+    <div class="toolbar__actions">
+      <button type="button" class="tbtn" id="copyLink">Copy link</button>
+      <button type="button" class="tbtn" id="downloadJson">Download data (.json)</button>
+      <button type="button" class="tbtn tbtn--primary" id="printBtn">Print / Save as PDF</button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+    <!-- Empty / error state -->
+    <section class="empty" id="emptyState" hidden>
+      <div class="empty__emoji" aria-hidden="true">📄</div>
+      <h1>No profile to show yet.</h1>
+      <p id="emptyMsg">Open this page from the link in a pre-call email, or submit the form first.</p>
+      <p><a class="tbtn tbtn--primary" href="?sample=1">See a sample profile</a></p>
+    </section>
+
+    <!-- The one-page sheet -->
+    <article class="sheet" id="sheet" hidden aria-label="One-page project profile">
+      <header class="hero">
+        <div class="hero__kicker">
+          <span>Pre-call · Project profile</span>
+          <span class="badge">Layer 1</span>
+        </div>
+        <h1 class="hero__title" id="pTitle">Untitled project</h1>
+        <p class="hero__meta" id="pMeta"></p>
+      </header>
+
+      <section class="snapshot" aria-label="Snapshot">
+        <div class="tile"><span class="tile__label">Platform</span><span class="tile__value" id="pPlatform">—</span></div>
+        <div class="tile"><span class="tile__label">Devices</span><span class="tile__value" id="pDevices">—</span></div>
+        <div class="tile"><span class="tile__label">Timeline</span><span class="tile__value" id="pTimeline">—</span></div>
+        <div class="tile"><span class="tile__label">Personality</span><span class="tile__value" id="pPersonality">—</span></div>
+      </section>
+
+      <div class="cols">
+        <div class="col">
+          <section class="block">
+            <h2><span aria-hidden="true">🎯</span> The problem</h2>
+            <blockquote class="quote" id="pProblem">—</blockquote>
+            <dl class="kv">
+              <dt>Handled today</dt><dd id="pToday">—</dd>
+              <dt>If it works — in 6 months</dt><dd id="pDream">—</dd>
+            </dl>
+          </section>
+
+          <section class="block">
+            <h2><span aria-hidden="true">🎨</span> Look &amp; feel</h2>
+            <dl class="kv">
+              <dt>Personality</dt><dd id="pPersonality2">—</dd>
+              <dt>Inspiration</dt><dd id="pInspo">—</dd>
+              <dt>Should NOT feel like</dt><dd id="pAvoid">—</dd>
+            </dl>
+          </section>
+        </div>
+
+        <div class="col">
+          <section class="block">
+            <h2><span aria-hidden="true">👥</span> The people</h2>
+            <div class="chips" id="pUsers"></div>
+          </section>
+
+          <section class="block">
+            <h2><span aria-hidden="true">⚡</span> Features <span class="count" id="pFeatureCount"></span></h2>
+            <div class="mvp" id="pMustHaveWrap">
+              <span class="mvp__label">Launch must-have</span>
+              <span class="mvp__value" id="pMustHave">—</span>
+            </div>
+            <div class="chips" id="pFeatures"></div>
+            <dl class="kv">
+              <dt>Needs to connect with</dt><dd id="pIntegrations">—</dd>
+            </dl>
+          </section>
+
+          <section class="block">
+            <h2><span aria-hidden="true">🚀</span> The reality</h2>
+            <dl class="kv">
+              <dt>Timeline</dt><dd id="pTimeline2">—</dd>
+              <dt>Who else says yes</dt><dd id="pApprovers">—</dd>
+            </dl>
+          </section>
+        </div>
+      </div>
+
+      <section class="prep" aria-label="Prep for the call">
+        <h2><span aria-hidden="true">📞</span> Prep for the call</h2>
+        <ul id="pPrep"></ul>
+      </section>
+
+      <section class="notes" aria-label="Call notes">
+        <h2>Call notes</h2>
+        <div class="lines" aria-hidden="true"><i></i><i></i><i></i></div>
+      </section>
+
+      <footer class="foot">
+        <span id="pFootRef">—</span>
+        <span>Generated from the pre-call form · Next: Layer 2</span>
+      </footer>
+    </article>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/shared.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>
