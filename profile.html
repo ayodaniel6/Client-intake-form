@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Project Profile — Pre-call</title>
+  <title>Lead Qualification Packet (LQP) — Jidoka</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -13,10 +13,10 @@
 <body>
 
   <!-- Toolbar (hidden when printing) -->
-  <header class="toolbar" role="toolbar" aria-label="Profile actions">
+  <header class="toolbar" role="toolbar" aria-label="Packet actions">
     <div class="toolbar__title">
-      <span class="dot" aria-hidden="true"></span>
-      Pre-call · Project profile
+      <span class="dot" aria-hidden="true">J</span>
+      Lead Qualification Packet (LQP)
     </div>
     <div class="toolbar__actions">
       <button type="button" class="tbtn" id="copyLink">Copy link</button>
@@ -28,92 +28,77 @@
   <main class="stage" id="stage">
     <!-- Empty / error state -->
     <section class="empty" id="emptyState" hidden>
-      <div class="empty__emoji" aria-hidden="true">📄</div>
-      <h1>No profile to show yet.</h1>
-      <p id="emptyMsg">Open this page from the link in a pre-call email, or submit the form first.</p>
-      <p><a class="tbtn tbtn--primary" href="?sample=1">See a sample profile</a></p>
+      <h1>No packet to show.</h1>
+      <p id="emptyMsg">Open this page from the link in a qualification email, or submit the form first.</p>
+      <p><a class="tbtn tbtn--primary" href="?sample=1">View a sample packet</a></p>
     </section>
 
-    <!-- The one-page sheet -->
-    <article class="sheet" id="sheet" hidden aria-label="One-page project profile">
+    <!-- The one-page packet -->
+    <article class="sheet" id="sheet" hidden aria-label="Lead Qualification Packet">
       <header class="hero">
-        <div class="hero__kicker">
-          <span>Pre-call · Project profile</span>
-          <span class="badge">Layer 1</span>
+        <div class="hero__main">
+          <div class="hero__kicker">Jidoka Technologies · Lead Qualification Packet (LQP)</div>
+          <h1 class="hero__title" id="pCompany">Unnamed company</h1>
+          <dl class="hero__meta">
+            <div><dt>Contact</dt><dd id="pContact">—</dd></div>
+            <div><dt>Email</dt><dd id="pEmail">—</dd></div>
+            <div><dt>Date</dt><dd id="pDate">—</dd></div>
+            <div><dt>Ref ID</dt><dd id="pRef">—</dd></div>
+            <div class="hero__meta-wide"><dt>Source</dt><dd id="pSource">—</dd></div>
+          </dl>
         </div>
-        <h1 class="hero__title" id="pTitle">Untitled project</h1>
-        <p class="hero__meta" id="pMeta"></p>
+
+        <div class="score" id="pScoreBox">
+          <div class="score__label">Lead score</div>
+          <div class="score__value"><span id="pScore">0.0</span><span class="score__max"> / 5</span></div>
+          <div class="score__verdict" id="pVerdict">—</div>
+          <table class="scorecard" aria-label="Score breakdown">
+            <tbody id="pScorecard"></tbody>
+          </table>
+        </div>
       </header>
 
-      <section class="snapshot" aria-label="Snapshot">
-        <div class="tile"><span class="tile__label">Platform</span><span class="tile__value" id="pPlatform">—</span></div>
-        <div class="tile"><span class="tile__label">Devices</span><span class="tile__value" id="pDevices">—</span></div>
-        <div class="tile"><span class="tile__label">Timeline</span><span class="tile__value" id="pTimeline">—</span></div>
-        <div class="tile"><span class="tile__label">Personality</span><span class="tile__value" id="pPersonality">—</span></div>
+      <section class="block" aria-labelledby="h-gates">
+        <h2 id="h-gates"><span class="num">1</span> The Gatekeepers <span class="h-sub">Overview</span></h2>
+        <div class="gates">
+          <div class="tile"><span class="tile__label">Industry</span><span class="tile__value" id="pIndustry">—</span></div>
+          <div class="tile"><span class="tile__label">Project Type</span><span class="tile__value" id="pProjectType">—</span></div>
+          <div class="tile"><span class="tile__label">Budget Range</span><span class="tile__value" id="pBudget">—</span></div>
+          <div class="tile"><span class="tile__label">Timeline</span><span class="tile__value" id="pTimeline">—</span><span class="tile__sub" id="pHardDate"></span></div>
+        </div>
       </section>
 
-      <div class="cols">
-        <div class="col">
-          <section class="block">
-            <h2><span aria-hidden="true">🎯</span> The problem</h2>
-            <blockquote class="quote" id="pProblem">—</blockquote>
-            <dl class="kv">
-              <dt>Handled today</dt><dd id="pToday">—</dd>
-              <dt>If it works — in 6 months</dt><dd id="pDream">—</dd>
-            </dl>
-          </section>
-
-          <section class="block">
-            <h2><span aria-hidden="true">🎨</span> Look &amp; feel</h2>
-            <dl class="kv">
-              <dt>Personality</dt><dd id="pPersonality2">—</dd>
-              <dt>Inspiration</dt><dd id="pInspo">—</dd>
-              <dt>Should NOT feel like</dt><dd id="pAvoid">—</dd>
-            </dl>
-          </section>
-        </div>
-
-        <div class="col">
-          <section class="block">
-            <h2><span aria-hidden="true">👥</span> The people</h2>
-            <div class="chips" id="pUsers"></div>
-          </section>
-
-          <section class="block">
-            <h2><span aria-hidden="true">⚡</span> Features <span class="count" id="pFeatureCount"></span></h2>
-            <div class="mvp" id="pMustHaveWrap">
-              <span class="mvp__label">Launch must-have</span>
-              <span class="mvp__value" id="pMustHave">—</span>
-            </div>
+      <section class="block" aria-labelledby="h-brief">
+        <h2 id="h-brief"><span class="num">2</span> The Project Brief</h2>
+        <dl class="brief">
+          <dt>The Problem</dt><dd><blockquote class="quote" id="pProblem">—</blockquote></dd>
+          <dt>Current Solution</dt><dd id="pCurrent">—</dd>
+          <dt>6-Month Vision</dt><dd id="pVision">—</dd>
+          <dt>Must-have Features</dt>
+          <dd class="brief__features">
+            <div class="mvp"><span class="mvp__label">Launch must-have</span> <span class="mvp__value" id="pMustHave">—</span></div>
             <div class="chips" id="pFeatures"></div>
-            <dl class="kv">
-              <dt>Needs to connect with</dt><dd id="pIntegrations">—</dd>
-            </dl>
-          </section>
+            <div class="scope" id="pScope"></div>
+          </dd>
+          <dt>Decision Makers</dt><dd id="pDecision">—</dd>
+        </dl>
+      </section>
 
-          <section class="block">
-            <h2><span aria-hidden="true">🚀</span> The reality</h2>
-            <dl class="kv">
-              <dt>Timeline</dt><dd id="pTimeline2">—</dd>
-              <dt>Who else says yes</dt><dd id="pApprovers">—</dd>
-            </dl>
-          </section>
-        </div>
-      </div>
-
-      <section class="prep" aria-label="Prep for the call">
-        <h2><span aria-hidden="true">📞</span> Prep for the call</h2>
+      <section class="block prep" aria-labelledby="h-prep">
+        <h2 id="h-prep"><span class="num">3</span> Call Prep <span class="h-sub">Auto-generated</span></h2>
         <ul id="pPrep"></ul>
       </section>
 
-      <section class="notes" aria-label="Call notes">
-        <h2>Call notes</h2>
-        <div class="lines" aria-hidden="true"><i></i><i></i><i></i></div>
+      <section class="block notes" aria-labelledby="h-notes">
+        <h2 id="h-notes"><span class="num">4</span> Call Notes
+          <span class="decision" aria-label="Decision after the call">Decision: <span class="box"></span> Go <span class="box"></span> Nurture <span class="box"></span> No-go</span>
+        </h2>
+        <div class="lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
       </section>
 
       <footer class="foot">
         <span id="pFootRef">—</span>
-        <span>Generated from the pre-call form · Next: Layer 2</span>
+        <span>No packet, no sales call · Next: Business call → Intake → Discovery</span>
       </footer>
     </article>
   </main>
